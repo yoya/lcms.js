@@ -69,6 +69,14 @@ function cmsCreateTransform(hInput, inputFormat, hOutput, outputFormat, intent, 
     return ccall("cmsCreateTransform", "number", ["number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, intent, flags]);
 }
 
+function  cmsDeleteTransform(hProfile){
+    if (! hProfile) {
+	console.warn("cmsDeleteTransform: ! hProfile");
+	return ;
+    }
+    ccall("cmsDeleteTransform", undefined, ["number"], [hProfile]);
+}
+
 function cmsReadTag(hProfile, sig) {
     var ptr = ccall("cmsReadTag", undefined, ["number", "number"], [hProfile, sig]);
     return ptr;

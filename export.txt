@@ -4,5 +4,6 @@ cmsGetProfileInfoASCII
 cmsGetColorSpace
 cmsFormatterForColorspaceOfProfile
 cmsCreateTransform
+cmsDeleteTransform
 cmsReadTag
 cmsXYZ2xyY
