@@ -6,5 +6,8 @@ cmsGetColorSpace
 cmsFormatterForColorspaceOfProfile
 cmsCreateTransform
 cmsDeleteTransform
+cmsDoTransform
+cmsGetTransformInputFormat
+cmsGetTransformOutputFormat
 cmsReadTag
 cmsXYZ2xyY

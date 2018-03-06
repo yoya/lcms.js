@@ -70282,6 +70282,47 @@ function _cmsCreateTransform($0,$1,$2,$3,$4,$5) {
  $20 = (_cmsCreateTransformTHR($13,$14,$15,$16,$17,$18,$19)|0);
  STACKTOP = sp;return ($20|0);
 }
+function _cmsGetTransformInputFormat($0) {
+ $0 = $0|0;
+ var $1 = 0, $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, label = 0, sp = 0;
+ sp = STACKTOP;
+ STACKTOP = STACKTOP + 16|0; if ((STACKTOP|0) >= (STACK_MAX|0)) abortStackOverflow(16|0);
+ $2 = $0;
+ $4 = $2;
+ $3 = $4;
+ $5 = $3;
+ $6 = ($5|0)==(0|0);
+ if ($6) {
+  $1 = 0;
+ } else {
+  $7 = $3;
+  $8 = HEAP32[$7>>2]|0;
+  $1 = $8;
+ }
+ $9 = $1;
+ STACKTOP = sp;return ($9|0);
+}
+function _cmsGetTransformOutputFormat($0) {
+ $0 = $0|0;
+ var $1 = 0, $10 = 0, $2 = 0, $3 = 0, $4 = 0, $5 = 0, $6 = 0, $7 = 0, $8 = 0, $9 = 0, label = 0, sp = 0;
+ sp = STACKTOP;
+ STACKTOP = STACKTOP + 16|0; if ((STACKTOP|0) >= (STACK_MAX|0)) abortStackOverflow(16|0);
+ $2 = $0;
+ $4 = $2;
+ $3 = $4;
+ $5 = $3;
+ $6 = ($5|0)==(0|0);
+ if ($6) {
+  $1 = 0;
+ } else {
+  $7 = $3;
+  $8 = ((($7)) + 4|0);
+  $9 = HEAP32[$8>>2]|0;
+  $1 = $9;
+ }
+ $10 = $1;
+ STACKTOP = sp;return ($10|0);
+}
 function _emscripten_get_global_libc() {
  var label = 0, sp = 0;
  sp = STACKTOP;
@@ -80382,7 +80423,7 @@ var FUNCTION_TABLE_iiiiii = [b12,b12,b12,b12,b12,b12,b12,b12,b12,b12,b12,b12,b12
 ,b12,b12,b12];
 var FUNCTION_TABLE_viiii = [b13];
 
-  return { _cmsXYZ2xyY: _cmsXYZ2xyY, _cmsCreateTransform: _cmsCreateTransform, _cmsReadTag: _cmsReadTag, _cmsOpenProfileFromMem: _cmsOpenProfileFromMem, _llvm_cttz_i32: _llvm_cttz_i32, _cmsGetProfileInfoASCII: _cmsGetProfileInfoASCII, _bitshift64Lshr: _bitshift64Lshr, _bitshift64Shl: _bitshift64Shl, _cmsDeleteTransform: _cmsDeleteTransform, _fflush: _fflush, _memset: _memset, _sbrk: _sbrk, _memcpy: _memcpy, _llvm_bswap_i32: _llvm_bswap_i32, ___uremdi3: ___uremdi3, _i64Subtract: _i64Subtract, ___udivmoddi4: ___udivmoddi4, _i64Add: _i64Add, _pthread_mutex_unlock: _pthread_mutex_unlock, _cmsCloseProfile: _cmsCloseProfile, _emscripten_get_global_libc: _emscripten_get_global_libc, _cmsFormatterForColorspaceOfProfile: _cmsFormatterForColorspaceOfProfile, ___udivdi3: ___udivdi3, ___errno_location: ___errno_location, _free: _free, _memmove: _memmove, _cmsGetColorSpace: _cmsGetColorSpace, _malloc: _malloc, _pthread_mutex_lock: _pthread_mutex_lock, _cmsCreate_sRGBProfile: _cmsCreate_sRGBProfile, runPostSets: runPostSets, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setTempRet0: setTempRet0, getTempRet0: getTempRet0, setThrew: setThrew, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setThrew: setThrew, setTempRet0: setTempRet0, getTempRet0: getTempRet0, dynCall_iiiiiiii: dynCall_iiiiiiii, dynCall_iiii: dynCall_iiii, dynCall_viiiii: dynCall_viiiii, dynCall_vi: dynCall_vi, dynCall_vii: dynCall_vii, dynCall_ii: dynCall_ii, dynCall_diid: dynCall_diid, dynCall_viii: dynCall_viii, dynCall_idi: dynCall_idi, dynCall_iiiii: dynCall_iiiii, dynCall_viiiiii: dynCall_viiiiii, dynCall_iii: dynCall_iii, dynCall_iiiiii: dynCall_iiiiii, dynCall_viiii: dynCall_viiii };
+  return { _cmsXYZ2xyY: _cmsXYZ2xyY, _cmsGetTransformInputFormat: _cmsGetTransformInputFormat, _cmsCreateTransform: _cmsCreateTransform, _cmsReadTag: _cmsReadTag, _cmsOpenProfileFromMem: _cmsOpenProfileFromMem, _memset: _memset, _cmsGetTransformOutputFormat: _cmsGetTransformOutputFormat, _cmsGetProfileInfoASCII: _cmsGetProfileInfoASCII, _bitshift64Lshr: _bitshift64Lshr, _bitshift64Shl: _bitshift64Shl, _cmsDeleteTransform: _cmsDeleteTransform, _fflush: _fflush, _cmsDoTransform: _cmsDoTransform, _llvm_cttz_i32: _llvm_cttz_i32, _sbrk: _sbrk, _memcpy: _memcpy, _llvm_bswap_i32: _llvm_bswap_i32, ___uremdi3: ___uremdi3, _i64Subtract: _i64Subtract, ___udivmoddi4: ___udivmoddi4, _i64Add: _i64Add, _pthread_mutex_unlock: _pthread_mutex_unlock, _cmsCloseProfile: _cmsCloseProfile, _emscripten_get_global_libc: _emscripten_get_global_libc, _cmsFormatterForColorspaceOfProfile: _cmsFormatterForColorspaceOfProfile, ___udivdi3: ___udivdi3, ___errno_location: ___errno_location, _free: _free, _memmove: _memmove, _cmsGetColorSpace: _cmsGetColorSpace, _malloc: _malloc, _pthread_mutex_lock: _pthread_mutex_lock, _cmsCreate_sRGBProfile: _cmsCreate_sRGBProfile, runPostSets: runPostSets, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setTempRet0: setTempRet0, getTempRet0: getTempRet0, setThrew: setThrew, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setThrew: setThrew, setTempRet0: setTempRet0, getTempRet0: getTempRet0, dynCall_iiiiiiii: dynCall_iiiiiiii, dynCall_iiii: dynCall_iiii, dynCall_viiiii: dynCall_viiiii, dynCall_vi: dynCall_vi, dynCall_vii: dynCall_vii, dynCall_ii: dynCall_ii, dynCall_diid: dynCall_diid, dynCall_viii: dynCall_viii, dynCall_idi: dynCall_idi, dynCall_iiiii: dynCall_iiiii, dynCall_viiiiii: dynCall_viiiiii, dynCall_iii: dynCall_iii, dynCall_iiiiii: dynCall_iiiiii, dynCall_viiii: dynCall_viiii };
 })
 // EMSCRIPTEN_END_ASM
 (Module.asmGlobalArg, Module.asmLibraryArg, buffer);
@@ -80391,6 +80432,12 @@ var real__cmsXYZ2xyY = asm["_cmsXYZ2xyY"]; asm["_cmsXYZ2xyY"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
 return real__cmsXYZ2xyY.apply(null, arguments);
+};
+
+var real__cmsGetTransformInputFormat = asm["_cmsGetTransformInputFormat"]; asm["_cmsGetTransformInputFormat"] = function() {
+assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+return real__cmsGetTransformInputFormat.apply(null, arguments);
 };
 
 var real__cmsCreateTransform = asm["_cmsCreateTransform"]; asm["_cmsCreateTransform"] = function() {
@@ -80417,16 +80464,16 @@ assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it a
 return real__cmsOpenProfileFromMem.apply(null, arguments);
 };
 
-var real__llvm_cttz_i32 = asm["_llvm_cttz_i32"]; asm["_llvm_cttz_i32"] = function() {
-assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
-assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
-return real__llvm_cttz_i32.apply(null, arguments);
-};
-
 var real_getTempRet0 = asm["getTempRet0"]; asm["getTempRet0"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
 return real_getTempRet0.apply(null, arguments);
+};
+
+var real__cmsGetTransformOutputFormat = asm["_cmsGetTransformOutputFormat"]; asm["_cmsGetTransformOutputFormat"] = function() {
+assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+return real__cmsGetTransformOutputFormat.apply(null, arguments);
 };
 
 var real__cmsGetProfileInfoASCII = asm["_cmsGetProfileInfoASCII"]; asm["_cmsGetProfileInfoASCII"] = function() {
@@ -80457,6 +80504,18 @@ var real__fflush = asm["_fflush"]; asm["_fflush"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
 return real__fflush.apply(null, arguments);
+};
+
+var real__cmsDoTransform = asm["_cmsDoTransform"]; asm["_cmsDoTransform"] = function() {
+assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+return real__cmsDoTransform.apply(null, arguments);
+};
+
+var real__llvm_cttz_i32 = asm["_llvm_cttz_i32"]; asm["_llvm_cttz_i32"] = function() {
+assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+return real__llvm_cttz_i32.apply(null, arguments);
 };
 
 var real__sbrk = asm["_sbrk"]; asm["_sbrk"] = function() {
@@ -80597,18 +80656,21 @@ assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it a
 return real__cmsCreate_sRGBProfile.apply(null, arguments);
 };
 var _cmsXYZ2xyY = Module["_cmsXYZ2xyY"] = asm["_cmsXYZ2xyY"];
+var _cmsGetTransformInputFormat = Module["_cmsGetTransformInputFormat"] = asm["_cmsGetTransformInputFormat"];
 var _cmsCreateTransform = Module["_cmsCreateTransform"] = asm["_cmsCreateTransform"];
 var stackSave = Module["stackSave"] = asm["stackSave"];
 var _cmsReadTag = Module["_cmsReadTag"] = asm["_cmsReadTag"];
 var _cmsOpenProfileFromMem = Module["_cmsOpenProfileFromMem"] = asm["_cmsOpenProfileFromMem"];
-var _llvm_cttz_i32 = Module["_llvm_cttz_i32"] = asm["_llvm_cttz_i32"];
+var _memset = Module["_memset"] = asm["_memset"];
 var getTempRet0 = Module["getTempRet0"] = asm["getTempRet0"];
+var _cmsGetTransformOutputFormat = Module["_cmsGetTransformOutputFormat"] = asm["_cmsGetTransformOutputFormat"];
 var _cmsGetProfileInfoASCII = Module["_cmsGetProfileInfoASCII"] = asm["_cmsGetProfileInfoASCII"];
 var _bitshift64Lshr = Module["_bitshift64Lshr"] = asm["_bitshift64Lshr"];
 var _bitshift64Shl = Module["_bitshift64Shl"] = asm["_bitshift64Shl"];
 var _cmsDeleteTransform = Module["_cmsDeleteTransform"] = asm["_cmsDeleteTransform"];
 var _fflush = Module["_fflush"] = asm["_fflush"];
-var _memset = Module["_memset"] = asm["_memset"];
+var _cmsDoTransform = Module["_cmsDoTransform"] = asm["_cmsDoTransform"];
+var _llvm_cttz_i32 = Module["_llvm_cttz_i32"] = asm["_llvm_cttz_i32"];
 var _sbrk = Module["_sbrk"] = asm["_sbrk"];
 var _memcpy = Module["_memcpy"] = asm["_memcpy"];
 var ___errno_location = Module["___errno_location"] = asm["___errno_location"];
