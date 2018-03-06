@@ -37,6 +37,9 @@ var cmsFLAGS_NOCACHE = 0x0040; // Inhibit 1-pixel cache (1636)
 function cmsOpenProfileFromMem(arr, size) { // Uint32Array, number
     return ccall("cmsOpenProfileFromMem", "number", ["array", "number"], [arr, size]);
 }
+function cmsCloseProfile(hProfile) {
+    return ccall("cmsCreate_sRGBProfile", undefined, ["number"], [hProfile]);
+}
 
 function cmsCreate_sRGBProfile() {
     return ccall("cmsCreate_sRGBProfile", "number", [], []);

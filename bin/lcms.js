@@ -80382,7 +80382,7 @@ var FUNCTION_TABLE_iiiiii = [b12,b12,b12,b12,b12,b12,b12,b12,b12,b12,b12,b12,b12
 ,b12,b12,b12];
 var FUNCTION_TABLE_viiii = [b13];
 
-  return { _cmsXYZ2xyY: _cmsXYZ2xyY, _cmsCreateTransform: _cmsCreateTransform, _cmsReadTag: _cmsReadTag, _cmsOpenProfileFromMem: _cmsOpenProfileFromMem, _llvm_cttz_i32: _llvm_cttz_i32, _cmsGetProfileInfoASCII: _cmsGetProfileInfoASCII, _bitshift64Lshr: _bitshift64Lshr, _bitshift64Shl: _bitshift64Shl, _cmsDeleteTransform: _cmsDeleteTransform, _fflush: _fflush, _memset: _memset, _sbrk: _sbrk, _memcpy: _memcpy, _llvm_bswap_i32: _llvm_bswap_i32, ___uremdi3: ___uremdi3, _i64Subtract: _i64Subtract, ___udivmoddi4: ___udivmoddi4, _i64Add: _i64Add, _pthread_mutex_unlock: _pthread_mutex_unlock, _emscripten_get_global_libc: _emscripten_get_global_libc, _cmsFormatterForColorspaceOfProfile: _cmsFormatterForColorspaceOfProfile, ___udivdi3: ___udivdi3, ___errno_location: ___errno_location, _free: _free, _memmove: _memmove, _cmsGetColorSpace: _cmsGetColorSpace, _malloc: _malloc, _pthread_mutex_lock: _pthread_mutex_lock, _cmsCreate_sRGBProfile: _cmsCreate_sRGBProfile, runPostSets: runPostSets, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setTempRet0: setTempRet0, getTempRet0: getTempRet0, setThrew: setThrew, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setThrew: setThrew, setTempRet0: setTempRet0, getTempRet0: getTempRet0, dynCall_iiiiiiii: dynCall_iiiiiiii, dynCall_iiii: dynCall_iiii, dynCall_viiiii: dynCall_viiiii, dynCall_vi: dynCall_vi, dynCall_vii: dynCall_vii, dynCall_ii: dynCall_ii, dynCall_diid: dynCall_diid, dynCall_viii: dynCall_viii, dynCall_idi: dynCall_idi, dynCall_iiiii: dynCall_iiiii, dynCall_viiiiii: dynCall_viiiiii, dynCall_iii: dynCall_iii, dynCall_iiiiii: dynCall_iiiiii, dynCall_viiii: dynCall_viiii };
+  return { _cmsXYZ2xyY: _cmsXYZ2xyY, _cmsCreateTransform: _cmsCreateTransform, _cmsReadTag: _cmsReadTag, _cmsOpenProfileFromMem: _cmsOpenProfileFromMem, _llvm_cttz_i32: _llvm_cttz_i32, _cmsGetProfileInfoASCII: _cmsGetProfileInfoASCII, _bitshift64Lshr: _bitshift64Lshr, _bitshift64Shl: _bitshift64Shl, _cmsDeleteTransform: _cmsDeleteTransform, _fflush: _fflush, _memset: _memset, _sbrk: _sbrk, _memcpy: _memcpy, _llvm_bswap_i32: _llvm_bswap_i32, ___uremdi3: ___uremdi3, _i64Subtract: _i64Subtract, ___udivmoddi4: ___udivmoddi4, _i64Add: _i64Add, _pthread_mutex_unlock: _pthread_mutex_unlock, _cmsCloseProfile: _cmsCloseProfile, _emscripten_get_global_libc: _emscripten_get_global_libc, _cmsFormatterForColorspaceOfProfile: _cmsFormatterForColorspaceOfProfile, ___udivdi3: ___udivdi3, ___errno_location: ___errno_location, _free: _free, _memmove: _memmove, _cmsGetColorSpace: _cmsGetColorSpace, _malloc: _malloc, _pthread_mutex_lock: _pthread_mutex_lock, _cmsCreate_sRGBProfile: _cmsCreate_sRGBProfile, runPostSets: runPostSets, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setTempRet0: setTempRet0, getTempRet0: getTempRet0, setThrew: setThrew, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setThrew: setThrew, setTempRet0: setTempRet0, getTempRet0: getTempRet0, dynCall_iiiiiiii: dynCall_iiiiiiii, dynCall_iiii: dynCall_iiii, dynCall_viiiii: dynCall_viiiii, dynCall_vi: dynCall_vi, dynCall_vii: dynCall_vii, dynCall_ii: dynCall_ii, dynCall_diid: dynCall_diid, dynCall_viii: dynCall_viii, dynCall_idi: dynCall_idi, dynCall_iiiii: dynCall_iiiii, dynCall_viiiiii: dynCall_viiiiii, dynCall_iii: dynCall_iii, dynCall_iiiiii: dynCall_iiiiii, dynCall_viiii: dynCall_viiii };
 })
 // EMSCRIPTEN_END_ASM
 (Module.asmGlobalArg, Module.asmLibraryArg, buffer);
@@ -80513,6 +80513,12 @@ assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it a
 return real__pthread_mutex_unlock.apply(null, arguments);
 };
 
+var real__cmsCloseProfile = asm["_cmsCloseProfile"]; asm["_cmsCloseProfile"] = function() {
+assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+return real__cmsCloseProfile.apply(null, arguments);
+};
+
 var real__emscripten_get_global_libc = asm["_emscripten_get_global_libc"]; asm["_emscripten_get_global_libc"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
@@ -80613,6 +80619,7 @@ var ___udivmoddi4 = Module["___udivmoddi4"] = asm["___udivmoddi4"];
 var setTempRet0 = Module["setTempRet0"] = asm["setTempRet0"];
 var _i64Add = Module["_i64Add"] = asm["_i64Add"];
 var _pthread_mutex_unlock = Module["_pthread_mutex_unlock"] = asm["_pthread_mutex_unlock"];
+var _cmsCloseProfile = Module["_cmsCloseProfile"] = asm["_cmsCloseProfile"];
 var _emscripten_get_global_libc = Module["_emscripten_get_global_libc"] = asm["_emscripten_get_global_libc"];
 var _cmsFormatterForColorspaceOfProfile = Module["_cmsFormatterForColorspaceOfProfile"] = asm["_cmsFormatterForColorspaceOfProfile"];
 var ___udivdi3 = Module["___udivdi3"] = asm["___udivdi3"];
