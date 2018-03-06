@@ -41,7 +41,7 @@ function cmsCloseProfile(hProfile) {
     return ccall("cmsCreate_sRGBProfile", undefined, ["number"], [hProfile]);
 }
 
-function cmsCreate_sRGBProfile() { // don't work on emcc -O3
+function cmsCreate_sRGBProfile() { // don't work on emcc -O2, -O3
     return ccall("cmsCreate_sRGBProfile", "number", [], []);
 }
 
