@@ -126,7 +126,7 @@ function cmsGetTransformOutputFormat(transform) {
 function cmsDoTransform(transform, inputArr, size) {
     var inputFormat = cmsGetTransformOutputFormat(transform);
     var outputFormat = cmsGetTransformOutputFormat(transform);
-    console.log(inputFormat, outputFormat);
+    // console.log(inputFormat, outputFormat);
     var inputIsFloat = T_FLOAT(inputFormat); // Float64 or Uint16
     var inputChannels = T_CHANNELS(inputFormat); // 3(RGB) or 4(CMYK)
     var inputTypeSize = inputIsFloat? 8: 2;
