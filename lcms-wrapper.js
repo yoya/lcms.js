@@ -132,15 +132,19 @@ function cmsGetTransformOutputFormat(transform) {
 function cmsDoTransform(transform, inputArr, size) {
     var inputFormat = cmsGetTransformOutputFormat(transform);
     var outputFormat = cmsGetTransformOutputFormat(transform);
-    // console.log(inputFormat, outputFormat);
+    // console.debug("inputFormat:"+inputFormat+" outputFormat:"+outputFormat);
     var inputIsFloat = T_FLOAT(inputFormat); // Float64 or Uint16
+    var inputBytes = T_BYTES(inputFormat); // Bytews per sample
     var inputChannels = T_CHANNELS(inputFormat); // 3(RGB) or 4(CMYK)
-    var inputTypeSize = inputIsFloat? 8: 2;
+    var inputTypeSize = T_BYTES(inputFormat);
+    inputTypeSize = (inputTypeSize < 1)? 8: inputTypeSize;
     var inputType = inputIsFloat? "double": "i16";
     var outputIsFloat = T_FLOAT(outputFormat);
     var outputChannels = T_CHANNELS(outputFormat);
-    var outputTypeSize = outputIsFloat? 8: 2;
+    var outputTypeSize = T_BYTES(outputFormat);
+    outputTypeSize = (outputTypeSize < 1)? 8: outputTypeSize;
     var outputType = outputIsFloat? "double": "i16";
+    //
     var inputBuffer = _malloc(inputChannels * inputTypeSize * size);
     var outputBuffer = _malloc(outputChannels * outputTypeSize * size);
     for (var i = 0 ; i < inputChannels * size ; i++) {
