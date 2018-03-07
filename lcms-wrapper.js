@@ -161,7 +161,8 @@ function cmsDoTransform(transform, inputArr, size) {
 	outputArr[i] = getValue(outputBuffer + outputTypeSize * i, outputType);
     }
     _free(inputBuffer);
-    // _free(outputBuffer);
+    _free(outputBuffer);
+    // console.debug("outputArr", outputArr);
     return outputArr;
 }
 
