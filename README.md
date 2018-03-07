@@ -20,4 +20,5 @@ console.log(rXYZ, rxyY);
 
 # demo
 
-test.html (print to developer console)
+- test.html (print to developer console)
+- http://app.awm.jp/image.js/lcms.html
