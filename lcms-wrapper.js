@@ -68,6 +68,12 @@ var cmsInfoManufacturer = 1;
 var cmsInfoModel        = 2;
 var cmsInfoCopyright    = 3;
 
+// ICC Intents
+var INTENT_PERCEPTUAL            = 0; // (L1617)
+var INTENT_RELATIVE_COLORIMETRIC = 1;
+var INTENT_SATURATION            = 2;
+var INTENT_ABSOLUTE_COLORIMETRIC = 3;
+
 var cmsFLAGS_NOCACHE = 0x0040; // Inhibit 1-pixel cache (1636)
 
 function cmsOpenProfileFromMem(arr, size) { // Uint32Array, number
