@@ -274,7 +274,6 @@ function cmsCreateLab4Profile(wpArr) {
 function cmsGetProfileInfoASCII(hProfile, info, languageCode, countryCode) {
     
     var len = ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, 0, 0]);
-    console.log(len);
     var ptr = _malloc(len);
     var len = ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, ptr, len]);
     var text = Pointer_stringify(ptr, len);
@@ -313,6 +312,7 @@ function cmsGetTransformOutputFormat(transform) {
 function cmsDoTransform(transform, inputArr, size) {
     var inputFormat = cmsGetTransformOutputFormat(transform);
     var outputFormat = cmsGetTransformOutputFormat(transform);
+    // console.log("transform:"+transform);
     // console.debug("inputFormat:"+inputFormat+" outputFormat:"+outputFormat);
     var inputIsFloat = T_FLOAT(inputFormat); // Float64 or Uint16
     var inputBytes = T_BYTES(inputFormat); // Bytews per sample
