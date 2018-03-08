@@ -1,6 +1,8 @@
 cmsOpenProfileFromMem
 cmsCloseProfile
 cmsCreate_sRGBProfile
+cmsCreateXYZProfile
+cmsCreateLab4Profile
 cmsGetProfileInfoASCII
 cmsGetColorSpace
 cmsFormatterForColorspaceOfProfile

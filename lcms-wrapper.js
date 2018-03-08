@@ -250,6 +250,23 @@ function cmsCloseProfile(hProfile) {
 function cmsCreate_sRGBProfile() { // don't work on emcc -O2, -O3
     return ccall("cmsCreate_sRGBProfile", "number", [], []);
 }
+function cmsCreateXYZProfile() {
+    return ccall("cmsCreateXYZProfile", "number", [], []);
+}
+function cmsCreateLab4Profile(wpArr) {
+    var whitePoint = 0;
+    if (wpArr) {
+	whitePoint = _malloc(8 * 3); // cmsCIExyY* WhitePoint
+	for (var i = 0 ; i < 3 ; i++) {
+	    setValue(whitePoint + i * 8, wpArr[i], "double");
+	}
+    }
+    var prof = ccall("cmsCreateLab4Profile", "number", ["number"], [whitePoint]);
+    if (whitePoint) {
+	_free(whitePoint);
+    }
+    return prof;
+}
 
 /*
   usage: hInput, cmsInfoDescription, "en", "US"
