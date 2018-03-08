@@ -136,19 +136,19 @@ function cmsDoTransform(transform, inputArr, size) {
     var inputIsFloat = T_FLOAT(inputFormat); // Float64 or Uint16
     var inputBytes = T_BYTES(inputFormat); // Bytews per sample
     var inputChannels = T_CHANNELS(inputFormat); // 3(RGB) or 4(CMYK)
-    var inputTypeSize = T_BYTES(inputFormat);
-    inputTypeSize = (inputTypeSize < 1)? 8: inputTypeSize;
+    var inputBytes = T_BYTES(inputFormat);
+    inputBytes = (inputBytes < 1)? 8: inputBytes;
     var inputType = inputIsFloat? "double": "i16";
     var outputIsFloat = T_FLOAT(outputFormat);
     var outputChannels = T_CHANNELS(outputFormat);
-    var outputTypeSize = T_BYTES(outputFormat);
-    outputTypeSize = (outputTypeSize < 1)? 8: outputTypeSize;
+    var outputBytes = T_BYTES(outputFormat);
+    outputBytes = (outputBytes < 1)? 8: outputBytes;
     var outputType = outputIsFloat? "double": "i16";
     //
-    var inputBuffer = _malloc(inputChannels * inputTypeSize * size);
-    var outputBuffer = _malloc(outputChannels * outputTypeSize * size);
+    var inputBuffer = _malloc(inputChannels * inputBytes * size);
+    var outputBuffer = _malloc(outputChannels * outputBytes * size);
     for (var i = 0 ; i < inputChannels * size ; i++) {
-	setValue(inputBuffer + inputTypeSize * i, inputArr[i], inputType);
+	setValue(inputBuffer + inputBytes * i, inputArr[i], inputType);
     }
     ccall("cmsDoTransform", undefined, ["number", "number", "number", "number"], [transform, inputBuffer, outputBuffer, size]);
 
@@ -158,7 +158,7 @@ function cmsDoTransform(transform, inputArr, size) {
 	var outputArr = new Uint16Array(outputChannels * size);
     }
     for (var i = 0 ; i < outputChannels * size ; i++) {
-	outputArr[i] = getValue(outputBuffer + outputTypeSize * i, outputType);
+	outputArr[i] = getValue(outputBuffer + outputBytes * i, outputType);
     }
     _free(inputBuffer);
     _free(outputBuffer);
