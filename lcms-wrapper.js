@@ -309,6 +309,24 @@ function cmsGetTransformOutputFormat(transform) {
     return ccall("cmsGetTransformOutputFormat", "number", ["number"], [transform]);
 }
 
+function typeListByBytes(bytes, isFloat) {
+    if (isFloat) {
+	switch(bytes) {
+	case 4: return "float"
+	case 0: case 8: return "double";
+	}
+    } else {
+	switch(bytes) {
+	case 1: return "i8"
+	case 2: return "i16"
+	case 4: return "i32"
+	case 0: case 8: return "i64";
+	}
+    }
+    console.error("typeListByBytes(bytes:"+bytes+", isFloat:"+isFloat+")");
+    return null;
+}
+
 function cmsDoTransform(transform, inputArr, size) {
     var inputFormat = cmsGetTransformOutputFormat(transform);
     var outputFormat = cmsGetTransformOutputFormat(transform);
@@ -319,12 +337,12 @@ function cmsDoTransform(transform, inputArr, size) {
     var inputChannels = T_CHANNELS(inputFormat); // 3(RGB) or 4(CMYK)
     var inputBytes = T_BYTES(inputFormat);
     inputBytes = (inputBytes < 1)? 8: inputBytes;
-    var inputType = inputIsFloat? "double": "i16";
+    var inputType = typeListByBytes(inputBytes, inputIsFloat);
     var outputIsFloat = T_FLOAT(outputFormat);
     var outputChannels = T_CHANNELS(outputFormat);
     var outputBytes = T_BYTES(outputFormat);
     outputBytes = (outputBytes < 1)? 8: outputBytes;
-    var outputType = outputIsFloat? "double": "i16";
+    var outputType = typeListByBytes(outputBytes, outputIsFloat);
     //
     var inputBuffer = _malloc(inputChannels * inputBytes * size);
     var outputBuffer = _malloc(outputChannels * outputBytes * size);
