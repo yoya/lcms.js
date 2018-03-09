@@ -305,7 +305,6 @@ function cmsFormatterForColorspaceOfProfile(hProfile, nBytes, isFloat) {
 }
 
 function cmsCreateTransform(hInput, inputFormat, hOutput, outputFormat, intent, flags) {
-    console.log(intent);
     return ccall("cmsCreateTransform", "number", ["number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, intent, flags]);
 }
 
