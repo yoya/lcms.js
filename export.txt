@@ -7,6 +7,7 @@ cmsGetProfileInfoASCII
 cmsGetColorSpace
 cmsFormatterForColorspaceOfProfile
 cmsCreateTransform
+cmsCreateProofingTransform
 cmsDeleteTransform
 cmsDoTransform
 cmsGetTransformInputFormat

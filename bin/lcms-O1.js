@@ -47639,6 +47639,83 @@ function _cmsCreateTransform($0,$1,$2,$3,$4,$5) {
  $7 = (_cmsCreateTransformTHR($6,$0,$1,$2,$3,$4,$5)|0);
  return ($7|0);
 }
+function _cmsCreateProofingTransformTHR($0,$1,$2,$3,$4,$5,$6,$7,$8) {
+ $0 = $0|0;
+ $1 = $1|0;
+ $2 = $2|0;
+ $3 = $3|0;
+ $4 = $4|0;
+ $5 = $5|0;
+ $6 = $6|0;
+ $7 = $7|0;
+ $8 = $8|0;
+ var $$0 = 0, $$lobit = 0, $10 = 0, $11 = 0, $12 = 0, $13 = 0, $14 = 0, $15 = 0, $16 = 0, $17 = 0, $18 = 0, $19 = 0, $20 = 0, $21 = 0, $22 = 0, $23 = 0.0, $24 = 0, $25 = 0, $26 = 0, $27 = 0;
+ var $28 = 0, $29 = 0, $30 = 0, $9 = 0, label = 0, sp = 0;
+ sp = STACKTOP;
+ STACKTOP = STACKTOP + 80|0; if ((STACKTOP|0) >= (STACK_MAX|0)) abortStackOverflow(80|0);
+ $9 = sp + 64|0;
+ $10 = sp + 48|0;
+ $11 = sp + 32|0;
+ $12 = sp;
+ $13 = $8 >>> 13;
+ $$lobit = $13 & 1;
+ HEAP32[$9>>2] = $1;
+ $14 = ((($9)) + 4|0);
+ HEAP32[$14>>2] = $5;
+ $15 = ((($9)) + 8|0);
+ HEAP32[$15>>2] = $5;
+ $16 = ((($9)) + 12|0);
+ HEAP32[$16>>2] = $3;
+ HEAP32[$10>>2] = $6;
+ $17 = ((($10)) + 4|0);
+ HEAP32[$17>>2] = $6;
+ $18 = ((($10)) + 8|0);
+ HEAP32[$18>>2] = 1;
+ $19 = ((($10)) + 12|0);
+ HEAP32[$19>>2] = $7;
+ HEAP32[$11>>2] = $$lobit;
+ $20 = ((($11)) + 4|0);
+ HEAP32[$20>>2] = $$lobit;
+ $21 = ((($11)) + 8|0);
+ HEAP32[$21>>2] = 0;
+ $22 = ((($11)) + 12|0);
+ HEAP32[$22>>2] = 0;
+ $23 = (+_cmsSetAdaptationStateTHR($0,-1.0));
+ $24 = ((($12)) + 24|0);
+ HEAPF64[$24>>3] = $23;
+ $25 = ((($12)) + 16|0);
+ HEAPF64[$25>>3] = $23;
+ $26 = ((($12)) + 8|0);
+ HEAPF64[$26>>3] = $23;
+ HEAPF64[$12>>3] = $23;
+ $27 = $8 & 20480;
+ $28 = ($27|0)==(0);
+ if ($28) {
+  $29 = (_cmsCreateTransformTHR($0,$1,$2,$3,$4,$6,$8)|0);
+  $$0 = $29;
+  STACKTOP = sp;return ($$0|0);
+ } else {
+  $30 = (_cmsCreateExtendedTransform($0,4,$9,$11,$10,$12,$5,1,$2,$4,$8)|0);
+  $$0 = $30;
+  STACKTOP = sp;return ($$0|0);
+ }
+ return (0)|0;
+}
+function _cmsCreateProofingTransform($0,$1,$2,$3,$4,$5,$6,$7) {
+ $0 = $0|0;
+ $1 = $1|0;
+ $2 = $2|0;
+ $3 = $3|0;
+ $4 = $4|0;
+ $5 = $5|0;
+ $6 = $6|0;
+ $7 = $7|0;
+ var $8 = 0, $9 = 0, label = 0, sp = 0;
+ sp = STACKTOP;
+ $8 = (_cmsGetProfileContextID($0)|0);
+ $9 = (_cmsCreateProofingTransformTHR($8,$0,$1,$2,$3,$4,$5,$6,$7)|0);
+ return ($9|0);
+}
 function _cmsGetTransformInputFormat($0) {
  $0 = $0|0;
  var $$0 = 0, $1 = 0, $2 = 0, label = 0, sp = 0;
@@ -57569,7 +57646,7 @@ var FUNCTION_TABLE_iii = [b11,__cmsMallocDefaultFn,__cmsMallocZeroDefaultFn,_def
 var FUNCTION_TABLE_iiiiii = [b12,_OptimizeByJoiningCurves,_OptimizeMatrixShaper,_OptimizeByComputingLinearization,_OptimizeByResampling,_ReadMPEElem,_ReadSeqID,_WriteSeqID,_ReadMPECurve,_WriteMPECurve,b12,b12,b12,b12,b12,b12];
 var FUNCTION_TABLE_viiii = [b13];
 
-  return { _cmsXYZ2xyY: _cmsXYZ2xyY, _cmsGetTransformInputFormat: _cmsGetTransformInputFormat, _cmsCreateTransform: _cmsCreateTransform, _cmsCreateXYZProfile: _cmsCreateXYZProfile, _cmsReadTag: _cmsReadTag, _cmsOpenProfileFromMem: _cmsOpenProfileFromMem, _memset: _memset, _cmsGetTransformOutputFormat: _cmsGetTransformOutputFormat, _cmsGetProfileInfoASCII: _cmsGetProfileInfoASCII, _bitshift64Lshr: _bitshift64Lshr, _bitshift64Shl: _bitshift64Shl, _cmsDeleteTransform: _cmsDeleteTransform, _fflush: _fflush, _cmsDoTransform: _cmsDoTransform, _llvm_cttz_i32: _llvm_cttz_i32, _sbrk: _sbrk, _memcpy: _memcpy, _llvm_bswap_i32: _llvm_bswap_i32, ___uremdi3: ___uremdi3, _i64Subtract: _i64Subtract, ___udivmoddi4: ___udivmoddi4, _i64Add: _i64Add, _cmsCreateLab4Profile: _cmsCreateLab4Profile, _pthread_mutex_unlock: _pthread_mutex_unlock, _llvm_bswap_i16: _llvm_bswap_i16, _cmsCloseProfile: _cmsCloseProfile, _emscripten_get_global_libc: _emscripten_get_global_libc, _cmsFormatterForColorspaceOfProfile: _cmsFormatterForColorspaceOfProfile, ___udivdi3: ___udivdi3, ___errno_location: ___errno_location, _free: _free, _memmove: _memmove, _cmsGetColorSpace: _cmsGetColorSpace, _malloc: _malloc, _pthread_mutex_lock: _pthread_mutex_lock, _cmsCreate_sRGBProfile: _cmsCreate_sRGBProfile, runPostSets: runPostSets, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setTempRet0: setTempRet0, getTempRet0: getTempRet0, setThrew: setThrew, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setThrew: setThrew, setTempRet0: setTempRet0, getTempRet0: getTempRet0, dynCall_iiiiiiii: dynCall_iiiiiiii, dynCall_iiii: dynCall_iiii, dynCall_viiiii: dynCall_viiiii, dynCall_vi: dynCall_vi, dynCall_vii: dynCall_vii, dynCall_ii: dynCall_ii, dynCall_diid: dynCall_diid, dynCall_viii: dynCall_viii, dynCall_idi: dynCall_idi, dynCall_iiiii: dynCall_iiiii, dynCall_viiiiii: dynCall_viiiiii, dynCall_iii: dynCall_iii, dynCall_iiiiii: dynCall_iiiiii, dynCall_viiii: dynCall_viiii };
+  return { _cmsXYZ2xyY: _cmsXYZ2xyY, _cmsCreateProofingTransform: _cmsCreateProofingTransform, _cmsGetTransformInputFormat: _cmsGetTransformInputFormat, _cmsCreateTransform: _cmsCreateTransform, _cmsCreateXYZProfile: _cmsCreateXYZProfile, _cmsReadTag: _cmsReadTag, _cmsOpenProfileFromMem: _cmsOpenProfileFromMem, _memset: _memset, _cmsGetTransformOutputFormat: _cmsGetTransformOutputFormat, _cmsGetProfileInfoASCII: _cmsGetProfileInfoASCII, _bitshift64Lshr: _bitshift64Lshr, _bitshift64Shl: _bitshift64Shl, _cmsDeleteTransform: _cmsDeleteTransform, _fflush: _fflush, _cmsDoTransform: _cmsDoTransform, _llvm_cttz_i32: _llvm_cttz_i32, _sbrk: _sbrk, _memcpy: _memcpy, _llvm_bswap_i32: _llvm_bswap_i32, ___uremdi3: ___uremdi3, _i64Subtract: _i64Subtract, ___udivmoddi4: ___udivmoddi4, _i64Add: _i64Add, _cmsCreateLab4Profile: _cmsCreateLab4Profile, _pthread_mutex_unlock: _pthread_mutex_unlock, _llvm_bswap_i16: _llvm_bswap_i16, _cmsCloseProfile: _cmsCloseProfile, _emscripten_get_global_libc: _emscripten_get_global_libc, _cmsFormatterForColorspaceOfProfile: _cmsFormatterForColorspaceOfProfile, ___udivdi3: ___udivdi3, ___errno_location: ___errno_location, _free: _free, _memmove: _memmove, _cmsGetColorSpace: _cmsGetColorSpace, _malloc: _malloc, _pthread_mutex_lock: _pthread_mutex_lock, _cmsCreate_sRGBProfile: _cmsCreate_sRGBProfile, runPostSets: runPostSets, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setTempRet0: setTempRet0, getTempRet0: getTempRet0, setThrew: setThrew, stackAlloc: stackAlloc, stackSave: stackSave, stackRestore: stackRestore, establishStackSpace: establishStackSpace, setThrew: setThrew, setTempRet0: setTempRet0, getTempRet0: getTempRet0, dynCall_iiiiiiii: dynCall_iiiiiiii, dynCall_iiii: dynCall_iiii, dynCall_viiiii: dynCall_viiiii, dynCall_vi: dynCall_vi, dynCall_vii: dynCall_vii, dynCall_ii: dynCall_ii, dynCall_diid: dynCall_diid, dynCall_viii: dynCall_viii, dynCall_idi: dynCall_idi, dynCall_iiiii: dynCall_iiiii, dynCall_viiiiii: dynCall_viiiiii, dynCall_iii: dynCall_iii, dynCall_iiiiii: dynCall_iiiiii, dynCall_viiii: dynCall_viiii };
 })
 // EMSCRIPTEN_END_ASM
 (Module.asmGlobalArg, Module.asmLibraryArg, buffer);
@@ -57578,6 +57655,12 @@ var real__cmsXYZ2xyY = asm["_cmsXYZ2xyY"]; asm["_cmsXYZ2xyY"] = function() {
 assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
 assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
 return real__cmsXYZ2xyY.apply(null, arguments);
+};
+
+var real__cmsCreateProofingTransform = asm["_cmsCreateProofingTransform"]; asm["_cmsCreateProofingTransform"] = function() {
+assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+return real__cmsCreateProofingTransform.apply(null, arguments);
 };
 
 var real__cmsGetTransformInputFormat = asm["_cmsGetTransformInputFormat"]; asm["_cmsGetTransformInputFormat"] = function() {
@@ -57820,6 +57903,7 @@ assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it a
 return real__cmsCreate_sRGBProfile.apply(null, arguments);
 };
 var _cmsXYZ2xyY = Module["_cmsXYZ2xyY"] = asm["_cmsXYZ2xyY"];
+var _cmsCreateProofingTransform = Module["_cmsCreateProofingTransform"] = asm["_cmsCreateProofingTransform"];
 var _cmsGetTransformInputFormat = Module["_cmsGetTransformInputFormat"] = asm["_cmsGetTransformInputFormat"];
 var _cmsCreateTransform = Module["_cmsCreateTransform"] = asm["_cmsCreateTransform"];
 var _cmsCreateXYZProfile = Module["_cmsCreateXYZProfile"] = asm["_cmsCreateXYZProfile"];

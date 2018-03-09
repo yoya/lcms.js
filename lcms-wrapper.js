@@ -305,7 +305,13 @@ function cmsFormatterForColorspaceOfProfile(hProfile, nBytes, isFloat) {
 }
 
 function cmsCreateTransform(hInput, inputFormat, hOutput, outputFormat, intent, flags) {
+    console.log(intent);
     return ccall("cmsCreateTransform", "number", ["number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, intent, flags]);
+}
+
+function cmsCreateProofingTransform(hInput, inputFormat, hOutput, outputFormat, proofing, intent, proofingIntent, flags) {
+    console.log(intent);
+    return ccall("cmsCreateProofingTransform", "number", ["number", "number", "number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, proofing, intent, proofingIntent, flags]);
 }
 
 function  cmsDeleteTransform(transform){
