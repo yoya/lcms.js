@@ -308,12 +308,12 @@ function cmsCreateTransform(hInput, inputFormat, hOutput, outputFormat, intent, 
     return ccall("cmsCreateTransform", "number", ["number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, intent, flags]);
 }
 
-function  cmsDeleteTransform(hProfile){
-    if (! hProfile) {
-	console.warn("cmsDeleteTransform: ! hProfile");
+function  cmsDeleteTransform(transform){
+    if (! transform) {
+	console.warn("cmsDeleteTransform: ! transform");
 	return ;
     }
-    ccall("cmsDeleteTransform", undefined, ["number"], [hProfile]);
+    ccall("cmsDeleteTransform", undefined, ["number"], [transform]);
 }
 
 function cmsGetTransformInputFormat(transform) {
