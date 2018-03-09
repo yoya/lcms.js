@@ -238,7 +238,21 @@ var INTENT_RELATIVE_COLORIMETRIC = 1;
 var INTENT_SATURATION            = 2;
 var INTENT_ABSOLUTE_COLORIMETRIC = 3;
 
-var cmsFLAGS_NOCACHE = 0x0040; // Inhibit 1-pixel cache (1636)
+
+// Flags
+var cmsFLAGS_NOCACHE       = 0x0040; // Inhibit 1-pixel cache (L1636)
+var cmsFLAGS_NOOPTIMIZE    = 0x0100; // Inhibit optimizations
+var cmsFLAGS_NULLTRANSFORM = 0x0200; // Don't transform anyway
+
+// Proofing flags
+var cmsFLAGS_GAMUTCHECK   = 0x1000; // Out of Gamut alarm
+var cmsFLAGS_SOFTPROOFING = 0x4000; // Do softproofing
+
+// Misc
+var cmsFLAGS_BLACKPOINTCOMPENSATION = 0x2000;
+var cmsFLAGS_NOWHITEONWHITEFIXUP    = 0x0004; // Don't fix scum dot
+var cmsFLAGS_HIGHRESPRECALC         = 0x0400; // Use more memory to give better accurancy
+var cmsFLAGS_LOWRESPRECALC          = 0x0800; // Use less memory to minimize resources
 
 function cmsOpenProfileFromMem(arr, size) { // Uint32Array, number
     return ccall("cmsOpenProfileFromMem", "number", ["array", "number"], [arr, size]);
