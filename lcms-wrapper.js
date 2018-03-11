@@ -347,13 +347,14 @@ function typeListByBytes(bytes, isFloat) {
 }
 
 function cmsDoTransform(transform, inputArr, size) {
-    var inputFormat = cmsGetTransformOutputFormat(transform);
+    var inputFormat  = cmsGetTransformInputFormat(transform);
     var outputFormat = cmsGetTransformOutputFormat(transform);
     // console.log("transform:"+transform);
     // console.debug("inputFormat:"+inputFormat+" outputFormat:"+outputFormat);
     var inputIsFloat = T_FLOAT(inputFormat); // Float64 or Uint16
     var inputBytes = T_BYTES(inputFormat); // Bytews per sample
     var inputChannels = T_CHANNELS(inputFormat); // 3(RGB) or 4(CMYK)
+    console.log(inputChannels);
     var inputBytes = T_BYTES(inputFormat);
     inputBytes = (inputBytes < 1)? 8: inputBytes;
     var inputType = typeListByBytes(inputBytes, inputIsFloat);
