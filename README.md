@@ -4,6 +4,7 @@ JavaScript Little-CMS powered by emscripten
 
 # usage
 
+```html
 <script type="text/javascript" src="lcms-wrapper.js"> </script>
 <script type="text/javascript" src="bin/lcms.js"> </script>
 
@@ -17,6 +18,7 @@ var rxyY = cmsXYZ2xyY(rXYZ);
 console.log(text);
 console.log(rXYZ, rxyY);
 </script>
+```
 
 # demo
 
