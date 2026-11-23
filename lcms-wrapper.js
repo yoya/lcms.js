@@ -288,9 +288,13 @@ function cmsCreateLab4Profile(wpArr) {
 function cmsGetProfileInfoASCII(hProfile, info, languageCode, countryCode) {
     
     var len = ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, 0, 0]);
+    if (len <= 0) {
+	return "";
+    }
     var ptr = _malloc(len);
-    var len = ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, ptr, len]);
-    var text = Pointer_stringify(ptr, len);
+    len = ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, ptr, len]);
+    // len includes the terminating NUL
+    var text = (len > 1)? Pointer_stringify(ptr, len - 1): "";
     _free(ptr);
     return text;
 }
