@@ -254,8 +254,16 @@ var cmsFLAGS_NOWHITEONWHITEFIXUP    = 0x0004; // Don't fix scum dot
 var cmsFLAGS_HIGHRESPRECALC         = 0x0400; // Use more memory to give better accurancy
 var cmsFLAGS_LOWRESPRECALC          = 0x0800; // Use less memory to minimize resources
 
-function cmsOpenProfileFromMem(arr, size) { // Uint32Array, number
-    return ccall("cmsOpenProfileFromMem", "number", ["array", "number"], [arr, size]);
+function cmsOpenProfileFromMem(arr, size) { // Uint8Array, number
+    // not ccall "array" type, it allocates on the (small) stack.
+    var ptr = _malloc(size);
+    if (arr.length > size) {
+	arr = Array.prototype.slice.call(arr, 0, size);
+    }
+    HEAPU8.set(arr, ptr);
+    var hProfile = ccall("cmsOpenProfileFromMem", "number", ["number", "number"], [ptr, size]);
+    _free(ptr); // lcms keeps its own copy.
+    return hProfile;
 }
 function cmsCloseProfile(hProfile) {
     return ccall("cmsCloseProfile", "number", ["number"], [hProfile]);
