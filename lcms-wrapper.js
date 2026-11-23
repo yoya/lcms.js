@@ -8,17 +8,23 @@
  * of recent emscripten do not define them as global variables.
  */
 
-var LCMS_VERSION = 2090; // L81
+var LCMS_VERSION = 2200; // L99
 
 // Maximum number of channels in ICC Profiles
-var cmsMAXCHANNELS = 16; // L654
+var cmsMAXCHANNELS = 16; // L692
 
-var cmsSigRedColorantTag   = 0x7258595A; // 'rXYZ' (L382)
+var cmsSigRedColorantTag   = 0x7258595A; // 'rXYZ' (L412)
 var cmsSigGreenColorantTag = 0x6758595A; // 'gXYZ'
 var cmsSigBlueColorantTag  = 0x6258595A; // 'bXYZ'
+var cmsSigRedTRCTag        = 0x72545243; // 'rTRC'
+var cmsSigGreenTRCTag      = 0x67545243; // 'gTRC'
+var cmsSigBlueTRCTag       = 0x62545243; // 'bTRC'
+var cmsSigGrayTRCTag       = 0x6b545243; // 'kTRC'
+var cmsSigcicpTag          = 0x63696370; // 'cicp' lcms 2.14+
+var cmsSigMHC2Tag          = 0x4D484332; // 'MHC2' lcms 2.16+
 
 // ICC Color spaces
-var cmsSigXYZData   = 0x58595A20; // 'XYZ ' (L433)
+var cmsSigXYZData   = 0x58595A20; // 'XYZ ' (L465)
 var cmsSigLabData   = 0x4C616220; // 'Lab '
 var cmsSigLuvData   = 0x4C757620; // 'Luv '
 var cmsSigYCbCrData = 0x59436272; // 'YCbr'
@@ -32,7 +38,8 @@ var cmsSigCmyData   = 0x434D5920; // 'CMY '
 
 
 // Format of pixel is defined by one cmsUInt32Number, using bit fields as follows
-var FLOAT_SH      = function(a) { return ((a) << 22); } // (L674)
+var PREMUL_SH     = function(m) { return ((m) << 23); } // (L713) lcms 2.13+
+var FLOAT_SH      = function(a) { return ((a) << 22); }
 var OPTIMIZED_SH  = function(s) { return ((s) << 21); }
 var COLORSPACE_SH = function(s) { return ((s) << 16); }
 var SWAPFIRST_SH  = function(s) { return ((s) << 14); }
@@ -44,6 +51,7 @@ var EXTRA_SH      = function(e) { return ((e) << 7); }
 var CHANNELS_SH   = function(c) { return ((c) << 3); }
 var BYTES_SH      = function(b) { return (b); }
 // These macros unpack format specifiers into integers
+var T_PREMUL     = function(m) { return (((m)>>23)&1); } // lcms 2.13+
 var T_FLOAT      = function(a) { return (((a)>>22)&1); }
 var T_OPTIMIZED  = function(o) { return (((o)>>21)&1); }
 var T_COLORSPACE = function(s) { return (((s)>>16)&31); }
@@ -57,7 +65,7 @@ var T_CHANNELS   = function(c) { return (((c)>>3)&15); }
 var T_BYTES      = function(b) { return ((b)&7); }
 
 // Pixel types
-var PT_ANY   = 0; // Don't check colorspace // (L701)
+var PT_ANY   = 0; // Don't check colorspace // (L742)
                       // 1 & 2 are reserved
 var PT_GRAY  = 3;
 var PT_RGB   = 4;
@@ -90,13 +98,15 @@ var PT_MCH15 = 29;
 
 var PT_LabV2 = 30; // Identical to PT_Lab, but using the V2 old encoding
 
-var TYPE_GRAY_8          = (COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(1)); // (L739)
+var TYPE_GRAY_8          = (COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(1)); // (L778)
 var TYPE_GRAY_8_REV      = (COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(1)|FLAVOR_SH(1));
 var TYPE_GRAY_16         = (COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(2));
 var TYPE_GRAY_16_REV     = (COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(2)|FLAVOR_SH(1));
 var TYPE_GRAY_16_SE      = (COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(2)|ENDIAN16_SH(1));
 var TYPE_GRAYA_8         = (COLORSPACE_SH(PT_GRAY)|EXTRA_SH(1)|CHANNELS_SH(1)|BYTES_SH(1));
+var TYPE_GRAYA_8_PREMUL = (COLORSPACE_SH(PT_GRAY)|EXTRA_SH(1)|CHANNELS_SH(1)|BYTES_SH(1)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_GRAYA_16        = (COLORSPACE_SH(PT_GRAY)|EXTRA_SH(1)|CHANNELS_SH(1)|BYTES_SH(2));
+var TYPE_GRAYA_16_PREMUL = (COLORSPACE_SH(PT_GRAY)|EXTRA_SH(1)|CHANNELS_SH(1)|BYTES_SH(2)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_GRAYA_16_SE     = (COLORSPACE_SH(PT_GRAY)|EXTRA_SH(1)|CHANNELS_SH(1)|BYTES_SH(2)|ENDIAN16_SH(1));
 var TYPE_GRAYA_8_PLANAR  = (COLORSPACE_SH(PT_GRAY)|EXTRA_SH(1)|CHANNELS_SH(1)|BYTES_SH(1)|PLANAR_SH(1));
 var TYPE_GRAYA_16_PLANAR = (COLORSPACE_SH(PT_GRAY)|EXTRA_SH(1)|CHANNELS_SH(1)|BYTES_SH(2)|PLANAR_SH(1));
@@ -113,24 +123,32 @@ var TYPE_BGR_16_PLANAR = (COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(2)|DOSWA
 var TYPE_BGR_16_SE     = (COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(2)|DOSWAP_SH(1)|ENDIAN16_SH(1));
 
 var TYPE_RGBA_8         = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1));
+var TYPE_RGBA_8_PREMUL = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_RGBA_8_PLANAR  = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|PLANAR_SH(1));
 var TYPE_RGBA_16        = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2));
+var TYPE_RGBA_16_PREMUL = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_RGBA_16_PLANAR = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|PLANAR_SH(1));
 var TYPE_RGBA_16_SE     = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|ENDIAN16_SH(1));
 
 var TYPE_ARGB_8         = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|SWAPFIRST_SH(1));
+var TYPE_ARGB_8_PREMUL = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|SWAPFIRST_SH(1)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_ARGB_8_PLANAR  = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|SWAPFIRST_SH(1)|PLANAR_SH(1));
 var TYPE_ARGB_16        = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|SWAPFIRST_SH(1));
+var TYPE_ARGB_16_PREMUL = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|SWAPFIRST_SH(1)|PREMUL_SH(1)); // lcms 2.13+
 
 var TYPE_ABGR_8         = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|DOSWAP_SH(1));
+var TYPE_ABGR_8_PREMUL = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|DOSWAP_SH(1)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_ABGR_8_PLANAR  = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|DOSWAP_SH(1)|PLANAR_SH(1));
 var TYPE_ABGR_16        = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|DOSWAP_SH(1));
+var TYPE_ABGR_16_PREMUL = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|DOSWAP_SH(1)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_ABGR_16_PLANAR = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|DOSWAP_SH(1)|PLANAR_SH(1));
 var TYPE_ABGR_16_SE     = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|DOSWAP_SH(1)|ENDIAN16_SH(1));
 
 var TYPE_BGRA_8        = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|DOSWAP_SH(1)|SWAPFIRST_SH(1));
+var TYPE_BGRA_8_PREMUL = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|DOSWAP_SH(1)|SWAPFIRST_SH(1)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_BGRA_8_PLANAR = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(1)|DOSWAP_SH(1)|SWAPFIRST_SH(1)|PLANAR_SH(1));
 var TYPE_BGRA_16       = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|DOSWAP_SH(1)|SWAPFIRST_SH(1));
+var TYPE_BGRA_16_PREMUL = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|DOSWAP_SH(1)|SWAPFIRST_SH(1)|PREMUL_SH(1)); // lcms 2.13+
 var TYPE_BGRA_16_SE    = (COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(2)|ENDIAN16_SH(1)|DOSWAP_SH(1)|SWAPFIRST_SH(1));
 
 var TYPE_CMY_8          = (COLORSPACE_SH(PT_CMY)|CHANNELS_SH(3)|BYTES_SH(1));
@@ -219,32 +237,54 @@ var TYPE_Lab_16   = (COLORSPACE_SH(PT_Lab)|CHANNELS_SH(3)|BYTES_SH(2));
 var TYPE_LabV2_16 = (COLORSPACE_SH(PT_LabV2)|CHANNELS_SH(3)|BYTES_SH(2));
 var TYPE_Yxy_16   = (COLORSPACE_SH(PT_Yxy)|CHANNELS_SH(3)|BYTES_SH(2));
 
+// Float formatters.
+var TYPE_XYZ_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_XYZ)|CHANNELS_SH(3)|BYTES_SH(4)); // (L949)
+var TYPE_Lab_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_Lab)|CHANNELS_SH(3)|BYTES_SH(4));
+var TYPE_LabA_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_Lab)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4));
+var TYPE_GRAY_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(4));
+var TYPE_GRAYA_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(4)|EXTRA_SH(1)); // lcms 2.13+
+var TYPE_GRAYA_FLT_PREMUL = (FLOAT_SH(1)|COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(4)|EXTRA_SH(1)|PREMUL_SH(1)); // lcms 2.13+
+var TYPE_RGB_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4));
+
+var TYPE_RGBA_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4));
+var TYPE_RGBA_FLT_PREMUL = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4)|PREMUL_SH(1)); // lcms 2.13+
+var TYPE_ARGB_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4)|SWAPFIRST_SH(1));
+var TYPE_ARGB_FLT_PREMUL = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4)|SWAPFIRST_SH(1)|PREMUL_SH(1)); // lcms 2.13+
+var TYPE_BGR_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(4)|DOSWAP_SH(1));
+var TYPE_BGRA_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4)|DOSWAP_SH(1)|SWAPFIRST_SH(1));
+var TYPE_BGRA_FLT_PREMUL = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4)|DOSWAP_SH(1)|SWAPFIRST_SH(1)|PREMUL_SH(1)); // lcms 2.13+
+var TYPE_ABGR_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4)|DOSWAP_SH(1));
+var TYPE_ABGR_FLT_PREMUL = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(4)|DOSWAP_SH(1)|PREMUL_SH(1)); // lcms 2.13+
+
+var TYPE_CMYK_FLT = (FLOAT_SH(1)|COLORSPACE_SH(PT_CMYK)|CHANNELS_SH(4)|BYTES_SH(4));
+
 // Floating point formatters.
 // NOTE THAT 'BYTES' FIELD IS SET TO ZERO ON DLB because 8 bytes overflows the bitfield
-var TYPE_XYZ_DBL  = (FLOAT_SH(1)|COLORSPACE_SH(PT_XYZ)|CHANNELS_SH(3)|BYTES_SH(0)); // (L916)
+var TYPE_XYZ_DBL  = (FLOAT_SH(1)|COLORSPACE_SH(PT_XYZ)|CHANNELS_SH(3)|BYTES_SH(0)); // (L971)
 var TYPE_Lab_DBL  = (FLOAT_SH(1)|COLORSPACE_SH(PT_Lab)|CHANNELS_SH(3)|BYTES_SH(0));
 var TYPE_GRAY_DBL = (FLOAT_SH(1)|COLORSPACE_SH(PT_GRAY)|CHANNELS_SH(1)|BYTES_SH(0));
 var TYPE_RGB_DBL  = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(0));
 var TYPE_BGR_DBL  = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(0)|DOSWAP_SH(1));
 var TYPE_CMYK_DBL = (FLOAT_SH(1)|COLORSPACE_SH(PT_CMYK)|CHANNELS_SH(4)|BYTES_SH(0))
+var TYPE_OKLAB_DBL = (FLOAT_SH(1)|COLORSPACE_SH(PT_MCH3)|CHANNELS_SH(3)|BYTES_SH(0)); // lcms 2.16+
 
 var TYPE_RGB_DBL = (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|CHANNELS_SH(3)|BYTES_SH(0))
 
 // Localized info, enum cmsInfoType
-var cmsInfoDescription  = 0; // (L1503)
+var cmsInfoDescription  = 0; // (L1605)
 var cmsInfoManufacturer = 1;
 var cmsInfoModel        = 2;
 var cmsInfoCopyright    = 3;
 
 // ICC Intents
-var INTENT_PERCEPTUAL            = 0; // (L1617)
+var INTENT_PERCEPTUAL            = 0; // (L1728)
 var INTENT_RELATIVE_COLORIMETRIC = 1;
 var INTENT_SATURATION            = 2;
 var INTENT_ABSOLUTE_COLORIMETRIC = 3;
 
 
 // Flags
-var cmsFLAGS_NOCACHE       = 0x0040; // Inhibit 1-pixel cache (L1636)
+var cmsFLAGS_NOCACHE       = 0x0040; // Inhibit 1-pixel cache (L1747)
 var cmsFLAGS_NOOPTIMIZE    = 0x0100; // Inhibit optimizations
 var cmsFLAGS_NULLTRANSFORM = 0x0200; // Don't transform anyway
 
@@ -255,7 +295,7 @@ var cmsFLAGS_SOFTPROOFING = 0x4000; // Do softproofing
 // Misc
 var cmsFLAGS_BLACKPOINTCOMPENSATION = 0x2000;
 var cmsFLAGS_NOWHITEONWHITEFIXUP    = 0x0004; // Don't fix scum dot
-var cmsFLAGS_HIGHRESPRECALC         = 0x0400; // Use more memory to give better accurancy
+var cmsFLAGS_HIGHRESPRECALC         = 0x0400; // Use more memory to give better accuracy
 var cmsFLAGS_LOWRESPRECALC          = 0x0800; // Use less memory to minimize resources
 
 function cmsOpenProfileFromMem(arr, size) { // Uint8Array, number
@@ -279,6 +319,9 @@ function cmsCreate_sRGBProfile() { // don't work on emcc -O2, -O3
 function cmsCreateXYZProfile() {
     return Module.ccall("cmsCreateXYZProfile", "number", [], []);
 }
+function cmsCreate_OkLabProfile() { // lcms 2.16+
+    return Module.ccall("cmsCreate_OkLabProfile", "number", ["number"], [0]); // ctx: NULL
+}
 function cmsCreateLab4Profile(wpArr) {
     var whitePoint = 0;
     if (wpArr) {
@@ -292,6 +335,11 @@ function cmsCreateLab4Profile(wpArr) {
 	Module._free(whitePoint);
     }
     return prof;
+}
+
+// The .cube file has to be in the emscripten file system. (lcms 2.16+)
+function cmsCreateDeviceLinkFromCubeFile(fileName) {
+    return Module.ccall("cmsCreateDeviceLinkFromCubeFile", "number", ["string"], [fileName]);
 }
 
 /*
@@ -311,9 +359,39 @@ function cmsGetProfileInfoASCII(hProfile, info, languageCode, countryCode) {
     return text;
 }
 
+/*
+  usage: hInput, cmsInfoDescription, "ja", "JP" (lcms 2.16+)
+*/
+function cmsGetProfileInfoUTF8(hProfile, info, languageCode, countryCode) {
+    var len = Module.ccall("cmsGetProfileInfoUTF8", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, 0, 0]);
+    if (len <= 0) {
+	return "";
+    }
+    var ptr = Module._malloc(len);
+    len = Module.ccall("cmsGetProfileInfoUTF8", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, ptr, len]);
+    // the buffer is NUL terminated
+    var text = (len > 1)? Module.UTF8ToString(ptr): "";
+    Module._free(ptr);
+    return text;
+}
+
 function cmsGetColorSpace(hProfile) {
     var cs = Module.ccall("cmsGetColorSpace", "number", ["number"], [hProfile]);
     return cs;
+}
+
+function cmsGetHeaderCMM(hProfile) { // lcms 2.19+
+    return Module.ccall("cmsGetHeaderCMM", "number", ["number"], [hProfile]) >>> 0;
+}
+
+// returns -1 for unknown color space. (lcms 2.14+)
+function cmsChannelsOfColorSpace(colorSpace) {
+    return Module.ccall("cmsChannelsOfColorSpace", "number", ["number"], [colorSpace]);
+}
+
+// returns -1 on error. (lcms 2.13+)
+function cmsDetectRGBProfileGamma(hProfile, threshold) {
+    return Module.ccall("cmsDetectRGBProfileGamma", "number", ["number", "number"], [hProfile, threshold]);
 }
 
 function cmsFormatterForColorspaceOfProfile(hProfile, nBytes, isFloat) {
@@ -426,6 +504,82 @@ function cmsReadTag_XYZ(hProfile, sig) {
     return xyz;
 }
 
+// returns {offset, size} of the n-th tag, or null. (lcms 2.19+)
+function cmsGetTagOffsetAndSize(hProfile, n) {
+    var ptr = Module._malloc(4 * 2); // cmsUInt32Number offset, size
+    var ok = Module.ccall("cmsGetTagOffsetAndSize", "number", ["number", "number", "number", "number"], [hProfile, n, ptr, ptr + 4]);
+    var ret = null;
+    if (ok) {
+	ret = { offset: Module.getValue(ptr, "i32") >>> 0,
+		size:   Module.getValue(ptr + 4, "i32") >>> 0 };
+    }
+    Module._free(ptr);
+    return ret;
+}
+
+/*
+  usage: cmsReadTag(hProfile, sig) of a MLU tag, "ja", "JP" (lcms 2.16+)
+*/
+function cmsMLUgetUTF8(mlu, languageCode, countryCode) {
+    var len = Module.ccall("cmsMLUgetUTF8", "number", ["number", "string", "string", "number", "number"], [mlu, languageCode, countryCode, 0, 0]);
+    if (len <= 0) {
+	return "";
+    }
+    var ptr = Module._malloc(len);
+    len = Module.ccall("cmsMLUgetUTF8", "number", ["number", "string", "string", "number", "number"], [mlu, languageCode, countryCode, ptr, len]);
+    // the buffer is NUL terminated
+    var text = (len > 1)? Module.UTF8ToString(ptr): "";
+    Module._free(ptr);
+    return text;
+}
+
+/* custom function, cmsVideoSignalType (lcms 2.14+) */
+function cmsReadTag_cicp(hProfile) {
+    var ptr = cmsReadTag(hProfile, cmsSigcicpTag);
+    if (! ptr) {
+	return null;
+    }
+    return { ColourPrimaries:         Module.HEAPU8[ptr],
+	     TransferCharacteristics: Module.HEAPU8[ptr + 1],
+	     MatrixCoefficients:      Module.HEAPU8[ptr + 2],
+	     VideoFullRangeFlag:      Module.HEAPU8[ptr + 3] };
+}
+
+/* custom function, cmsMHC2Type (lcms 2.16+) */
+function cmsReadTag_MHC2(hProfile) {
+    var ptr = cmsReadTag(hProfile, cmsSigMHC2Tag);
+    if (! ptr) {
+	return null;
+    }
+    // offsets on 32bit pointers: CurveEntries:0, Red/Green/BlueCurve:4,8,12,
+    // MinLuminance:16, PeakLuminance:24, XYZ2XYZmatrix:32
+    var curveEntries = Module.getValue(ptr, "i32") >>> 0;
+    var curves = [];
+    for (var i = 0 ; i < 3 ; i++) {
+	var curvePtr = Module.getValue(ptr + 4 + 4 * i, "i32");
+	var curve = new Float64Array(curveEntries);
+	for (var j = 0 ; j < curveEntries ; j++) {
+	    curve[j] = Module.getValue(curvePtr + 8 * j, "double");
+	}
+	curves.push(curve);
+    }
+    var matrix = [];
+    for (var i = 0 ; i < 3 ; i++) {
+	var row = new Float64Array(4);
+	for (var j = 0 ; j < 4 ; j++) {
+	    row[j] = Module.getValue(ptr + 32 + 8 * (4 * i + j), "double");
+	}
+	matrix.push(row);
+    }
+    return { CurveEntries:  curveEntries,
+	     RedCurve:      curves[0],
+	     GreenCurve:    curves[1],
+	     BlueCurve:     curves[2],
+	     MinLuminance:  Module.getValue(ptr + 16, "double"),
+	     PeakLuminance: Module.getValue(ptr + 24, "double"),
+	     XYZ2XYZmatrix: matrix };
+}
+
 function cmsXYZ2xyY(xyz) {
     var srcPtr = Module._malloc(8 * 3);
     var dstPtr = Module._malloc(8 * 3);
@@ -440,4 +594,169 @@ function cmsXYZ2xyY(xyz) {
     Module._free(srcPtr);
     Module._free(dstPtr);
     return xyY;
+}
+
+/*
+ * Contexts
+ */
+function cmsCreateContext() {
+    return Module.ccall("cmsCreateContext", "number", ["number", "number"], [0, 0]); // Plugin: NULL, UserData: NULL
+}
+function cmsDeleteContext(contextID) {
+    Module.ccall("cmsDeleteContext", undefined, ["number"], [contextID]);
+}
+// The .cube file has to be in the emscripten file system. (lcms 2.16+)
+function cmsCreateDeviceLinkFromCubeFileTHR(contextID, fileName) {
+    return Module.ccall("cmsCreateDeviceLinkFromCubeFileTHR", "number", ["number", "string"], [contextID, fileName]);
+}
+
+/*
+ * Tag directory
+ */
+function cmsGetTagCount(hProfile) {
+    return Module.ccall("cmsGetTagCount", "number", ["number"], [hProfile]);
+}
+function cmsGetTagSignature(hProfile, n) {
+    return Module.ccall("cmsGetTagSignature", "number", ["number", "number"], [hProfile, n]) >>> 0;
+}
+
+/*
+ * MLU (multilocalized unicode)
+ */
+function cmsMLUalloc(contextID, nItems) {
+    return Module.ccall("cmsMLUalloc", "number", ["number", "number"], [contextID, nItems]);
+}
+function cmsMLUfree(mlu) {
+    Module.ccall("cmsMLUfree", undefined, ["number"], [mlu]);
+}
+function cmsMLUsetUTF8(mlu, languageCode, countryCode, text) { // lcms 2.16+
+    return Module.ccall("cmsMLUsetUTF8", "number", ["number", "string", "string", "string"], [mlu, languageCode, countryCode, text]);
+}
+
+/*
+ * Tone curves
+ */
+/*
+  usage: n, cmsReadTag(hProfile, cmsSigRedTRCTag) (lcms 2.13+)
+  returns the cmsCurveSegment as an object, or null.
+*/
+function cmsGetToneCurveSegment(n, toneCurve) {
+    var ptr = Module.ccall("cmsGetToneCurveSegment", "number", ["number", "number"], [n, toneCurve]);
+    if (! ptr) {
+	return null;
+    }
+    // offsets on 32bit pointers: x0:0, x1:4, Type:8, Params:16,
+    // nGridPoints:96, SampledPoints:100
+    var type = Module.getValue(ptr + 8, "i32");
+    var params = new Float64Array(10);
+    for (var i = 0 ; i < 10 ; i++) {
+	params[i] = Module.getValue(ptr + 16 + 8 * i, "double");
+    }
+    var nGridPoints = Module.getValue(ptr + 96, "i32") >>> 0;
+    var sampledPtr = Module.getValue(ptr + 100, "i32");
+    var sampledPoints = null;
+    if ((type === 0) && sampledPtr) {
+	sampledPoints = new Float32Array(nGridPoints);
+	for (var i = 0 ; i < nGridPoints ; i++) {
+	    sampledPoints[i] = Module.getValue(sampledPtr + 4 * i, "float");
+	}
+    }
+    return { x0: Module.getValue(ptr, "float"),
+	     x1: Module.getValue(ptr + 4, "float"),
+	     Type:          type,
+	     Params:        params,
+	     nGridPoints:   nGridPoints,
+	     SampledPoints: sampledPoints };
+}
+
+/*
+ * Pipelines and stages
+ */
+// The pipeline is owned by the transform. (lcms 2.13+)
+function cmsGetTransformPipeline(transform) {
+    return Module.ccall("cmsGetTransformPipeline", "number", ["number"], [transform]);
+}
+// The pipeline is owned by the transform, NULL if no gamut check. (lcms 2.13+)
+function cmsGetTransformGamutCheckPipeline(transform) {
+    return Module.ccall("cmsGetTransformGamutCheckPipeline", "number", ["number"], [transform]);
+}
+function cmsPipelineInputChannels(lut) {
+    return Module.ccall("cmsPipelineInputChannels", "number", ["number"], [lut]);
+}
+function cmsPipelineOutputChannels(lut) {
+    return Module.ccall("cmsPipelineOutputChannels", "number", ["number"], [lut]);
+}
+function cmsPipelineStageCount(lut) {
+    return Module.ccall("cmsPipelineStageCount", "number", ["number"], [lut]);
+}
+function cmsPipelineGetPtrToFirstStage(lut) {
+    return Module.ccall("cmsPipelineGetPtrToFirstStage", "number", ["number"], [lut]);
+}
+function cmsPipelineEvalFloat(inputArr, lut) {
+    var inputChannels  = cmsPipelineInputChannels(lut);
+    var outputChannels = cmsPipelineOutputChannels(lut);
+    var inputBuffer  = Module._malloc(4 * inputChannels);
+    var outputBuffer = Module._malloc(4 * outputChannels);
+    for (var i = 0 ; i < inputChannels ; i++) {
+	Module.setValue(inputBuffer + 4 * i, inputArr[i], "float");
+    }
+    Module.ccall("cmsPipelineEvalFloat", undefined, ["number", "number", "number"], [inputBuffer, outputBuffer, lut]);
+    var outputArr = new Float32Array(outputChannels);
+    for (var i = 0 ; i < outputChannels ; i++) {
+	outputArr[i] = Module.getValue(outputBuffer + 4 * i, "float");
+    }
+    Module._free(inputBuffer);
+    Module._free(outputBuffer);
+    return outputArr;
+}
+function cmsStageNext(mpe) {
+    return Module.ccall("cmsStageNext", "number", ["number"], [mpe]);
+}
+function cmsStageType(mpe) {
+    return Module.ccall("cmsStageType", "number", ["number"], [mpe]) >>> 0;
+}
+function cmsGetStageContextID(mpe) { // lcms 2.13+
+    return Module.ccall("cmsGetStageContextID", "number", ["number"], [mpe]);
+}
+
+/*
+ * Named color lists
+ */
+// The list is owned by the transform, NULL if none. (lcms 2.13+)
+function cmsGetTransformInputColorants(transform) {
+    return Module.ccall("cmsGetTransformInputColorants", "number", ["number"], [transform]);
+}
+function cmsGetTransformOutputColorants(transform) { // lcms 2.13+
+    return Module.ccall("cmsGetTransformOutputColorants", "number", ["number"], [transform]);
+}
+function cmsNamedColorCount(namedColorList) {
+    return Module.ccall("cmsNamedColorCount", "number", ["number"], [namedColorList]);
+}
+// returns {Name, Prefix, Suffix, PCS, Colorant} of the n-th color, or null.
+function cmsNamedColorInfo(namedColorList, nColor) {
+    // Name[cmsMAX_PATH:256], Prefix[33], Suffix[33], (pad), PCS[3], Colorant[cmsMAXCHANNELS]
+    var namePtr     = Module._malloc(256 + 33 + 33 + 2 + 2 * 3 + 2 * cmsMAXCHANNELS);
+    var prefixPtr   = namePtr + 256;
+    var suffixPtr   = prefixPtr + 33;
+    var pcsPtr      = suffixPtr + 33 + 2;
+    var colorantPtr = pcsPtr + 2 * 3;
+    var ok = Module.ccall("cmsNamedColorInfo", "number", ["number", "number", "number", "number", "number", "number", "number"], [namedColorList, nColor, namePtr, prefixPtr, suffixPtr, pcsPtr, colorantPtr]);
+    var ret = null;
+    if (ok) {
+	var pcs = new Uint16Array(3);
+	for (var i = 0 ; i < 3 ; i++) {
+	    pcs[i] = Module.getValue(pcsPtr + 2 * i, "i16");
+	}
+	var colorant = new Uint16Array(cmsMAXCHANNELS);
+	for (var i = 0 ; i < cmsMAXCHANNELS ; i++) {
+	    colorant[i] = Module.getValue(colorantPtr + 2 * i, "i16");
+	}
+	ret = { Name:     Module.UTF8ToString(namePtr),
+		Prefix:   Module.UTF8ToString(prefixPtr),
+		Suffix:   Module.UTF8ToString(suffixPtr),
+		PCS:      pcs,
+		Colorant: colorant };
+    }
+    Module._free(namePtr);
+    return ret;
 }
