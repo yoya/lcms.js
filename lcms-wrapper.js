@@ -340,21 +340,21 @@ function cmsGetTransformOutputFormat(transform) {
     return ccall("cmsGetTransformOutputFormat", "number", ["number"], [transform]);
 }
 
-function typeListByBytes(bytes, isFloat) {
+// HEAP view for the sample type. Look it up on every use,
+// the views are replaced when the memory grows.
+function heapByBytes(bytes, isFloat) {
     if (isFloat) {
 	switch(bytes) {
-	case 4: return "float"
-	case 0: case 8: return "double";
+	case 4: return HEAPF32;
+	case 8: return HEAPF64;
 	}
     } else {
 	switch(bytes) {
-	case 1: return "i8"
-	case 2: return "i16"
-	case 4: return "i32"
-	case 0: case 8: return "i64";
+	case 1: return HEAPU8;
+	case 2: return HEAPU16;
 	}
     }
-    console.error("typeListByBytes(bytes:"+bytes+", isFloat:"+isFloat+")");
+    console.error("heapByBytes(bytes:"+bytes+", isFloat:"+isFloat+")");
     return null;
 }
 
@@ -371,28 +371,33 @@ function cmsDoTransform(transform, inputArr, size) {
     var outputBytes = T_BYTES(outputFormat);
     inputBytes  = (inputBytes < 1)? 8: inputBytes;
     outputBytes = (outputBytes < 1)? 8: outputBytes;
-    var inputType  = typeListByBytes(inputBytes, inputIsFloat);
-    var outputType = typeListByBytes(outputBytes, outputIsFloat);
-    //
-    var inputBuffer = _malloc(inputChannels * inputBytes * size);
-    var outputBuffer = _malloc(outputChannels * outputBytes * size);
-    for (var i = 0 ; i < inputChannels * size ; i++) {
-	setValue(inputBuffer + inputBytes * i, inputArr[i], inputType);
+    if ((! heapByBytes(inputBytes, inputIsFloat)) ||
+	(! heapByBytes(outputBytes, outputIsFloat))) {
+	return null; // unsupported sample type
     }
+    var inputLen  = inputChannels * size;
+    var outputLen = outputChannels * size;
+    //
+    var inputBuffer = _malloc(inputBytes * inputLen);
+    var outputBuffer = _malloc(outputBytes * outputLen);
+    // _malloc returns an 8 bytes aligned pointer.
+    var inputOffset = inputBuffer / inputBytes;
+    var inputHeap = heapByBytes(inputBytes, inputIsFloat).subarray(inputOffset, inputOffset + inputLen);
+    if (inputArr.length < inputLen) {
+	inputHeap.fill(0);
+    } else if (inputArr.length > inputLen) {
+	inputArr = Array.prototype.slice.call(inputArr, 0, inputLen);
+    }
+    inputHeap.set(inputArr);
     ccall("cmsDoTransform", undefined, ["number", "number", "number", "number"], [transform, inputBuffer, outputBuffer, size]);
 
     if (outputIsFloat) {
-	var outputArr = new Float64Array(outputChannels * size);
+	var outputArr = new Float64Array(outputLen);
     } else {
-	var outputArr = new Uint16Array(outputChannels * size);
+	var outputArr = new Uint16Array(outputLen);
     }
-    for (var i = 0 ; i < outputChannels * size ; i++) {
-	var v = getValue(outputBuffer + outputBytes * i, outputType);
-	if (outputType === "i8") {
-	    v &= 0xFF; // getValue "i8" is signed
-	}
-	outputArr[i] = v;
-    }
+    var outputOffset = outputBuffer / outputBytes;
+    outputArr.set(heapByBytes(outputBytes, outputIsFloat).subarray(outputOffset, outputOffset + outputLen));
     _free(inputBuffer);
     _free(outputBuffer);
     // console.debug("outputArr", outputArr);
