@@ -258,7 +258,7 @@ function cmsOpenProfileFromMem(arr, size) { // Uint32Array, number
     return ccall("cmsOpenProfileFromMem", "number", ["array", "number"], [arr, size]);
 }
 function cmsCloseProfile(hProfile) {
-    return ccall("cmsCreate_sRGBProfile", undefined, ["number"], [hProfile]);
+    return ccall("cmsCloseProfile", "number", ["number"], [hProfile]);
 }
 
 function cmsCreate_sRGBProfile() { // don't work on emcc -O2, -O3
