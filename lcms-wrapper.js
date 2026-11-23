@@ -374,7 +374,11 @@ function cmsDoTransform(transform, inputArr, size) {
 	var outputArr = new Uint16Array(outputChannels * size);
     }
     for (var i = 0 ; i < outputChannels * size ; i++) {
-	outputArr[i] = getValue(outputBuffer + outputBytes * i, outputType);
+	var v = getValue(outputBuffer + outputBytes * i, outputType);
+	if (outputType === "i8") {
+	    v &= 0xFF; // getValue "i8" is signed
+	}
+	outputArr[i] = v;
     }
     _free(inputBuffer);
     _free(outputBuffer);
