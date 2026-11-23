@@ -1,7 +1,11 @@
 "use strict";
 /*
  * 2018/03/06- (c) yoya@awm.jp
- * ref) https://kripken.github.io/emscripten-site/docs/api_reference/preamble.js.html#Pointer_stringify
+ * ref) https://emscripten.org/docs/api_reference/preamble.js.html
+ *
+ * The emscripten runtime is used through the Module object only
+ * (Module.ccall, Module._malloc, Module.HEAPU8, ...). Optimized builds
+ * of recent emscripten do not define them as global variables.
  */
 
 var LCMS_VERSION = 2090; // L81
@@ -256,36 +260,36 @@ var cmsFLAGS_LOWRESPRECALC          = 0x0800; // Use less memory to minimize res
 
 function cmsOpenProfileFromMem(arr, size) { // Uint8Array, number
     // not ccall "array" type, it allocates on the (small) stack.
-    var ptr = _malloc(size);
+    var ptr = Module._malloc(size);
     if (arr.length > size) {
 	arr = Array.prototype.slice.call(arr, 0, size);
     }
-    HEAPU8.set(arr, ptr);
-    var hProfile = ccall("cmsOpenProfileFromMem", "number", ["number", "number"], [ptr, size]);
-    _free(ptr); // lcms keeps its own copy.
+    Module.HEAPU8.set(arr, ptr);
+    var hProfile = Module.ccall("cmsOpenProfileFromMem", "number", ["number", "number"], [ptr, size]);
+    Module._free(ptr); // lcms keeps its own copy.
     return hProfile;
 }
 function cmsCloseProfile(hProfile) {
-    return ccall("cmsCloseProfile", "number", ["number"], [hProfile]);
+    return Module.ccall("cmsCloseProfile", "number", ["number"], [hProfile]);
 }
 
 function cmsCreate_sRGBProfile() { // don't work on emcc -O2, -O3
-    return ccall("cmsCreate_sRGBProfile", "number", [], []);
+    return Module.ccall("cmsCreate_sRGBProfile", "number", [], []);
 }
 function cmsCreateXYZProfile() {
-    return ccall("cmsCreateXYZProfile", "number", [], []);
+    return Module.ccall("cmsCreateXYZProfile", "number", [], []);
 }
 function cmsCreateLab4Profile(wpArr) {
     var whitePoint = 0;
     if (wpArr) {
-	whitePoint = _malloc(8 * 3); // cmsCIExyY* WhitePoint
+	whitePoint = Module._malloc(8 * 3); // cmsCIExyY* WhitePoint
 	for (var i = 0 ; i < 3 ; i++) {
-	    setValue(whitePoint + i * 8, wpArr[i], "double");
+	    Module.setValue(whitePoint + i * 8, wpArr[i], "double");
 	}
     }
-    var prof = ccall("cmsCreateLab4Profile", "number", ["number"], [whitePoint]);
+    var prof = Module.ccall("cmsCreateLab4Profile", "number", ["number"], [whitePoint]);
     if (whitePoint) {
-	_free(whitePoint);
+	Module._free(whitePoint);
     }
     return prof;
 }
@@ -295,34 +299,34 @@ function cmsCreateLab4Profile(wpArr) {
 */
 function cmsGetProfileInfoASCII(hProfile, info, languageCode, countryCode) {
     
-    var len = ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, 0, 0]);
+    var len = Module.ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, 0, 0]);
     if (len <= 0) {
 	return "";
     }
-    var ptr = _malloc(len);
-    len = ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, ptr, len]);
+    var ptr = Module._malloc(len);
+    len = Module.ccall("cmsGetProfileInfoASCII", "number", ["number", "number", "string", "string", "number", "number"], [hProfile, info, languageCode, countryCode, ptr, len]);
     // len includes the terminating NUL
-    var text = (len > 1)? Pointer_stringify(ptr, len - 1): "";
-    _free(ptr);
+    var text = (len > 1)? Module.UTF8ToString(ptr): "";
+    Module._free(ptr);
     return text;
 }
 
 function cmsGetColorSpace(hProfile) {
-    var cs = ccall("cmsGetColorSpace", "number", ["number"], [hProfile]);
+    var cs = Module.ccall("cmsGetColorSpace", "number", ["number"], [hProfile]);
     return cs;
 }
 
 function cmsFormatterForColorspaceOfProfile(hProfile, nBytes, isFloat) {
-    return ccall("cmsFormatterForColorspaceOfProfile", "number", ["number", "number", "number"], [hProfile, nBytes, isFloat]);
+    return Module.ccall("cmsFormatterForColorspaceOfProfile", "number", ["number", "number", "number"], [hProfile, nBytes, isFloat]);
 }
 
 function cmsCreateTransform(hInput, inputFormat, hOutput, outputFormat, intent, flags) {
-    return ccall("cmsCreateTransform", "number", ["number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, intent, flags]);
+    return Module.ccall("cmsCreateTransform", "number", ["number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, intent, flags]);
 }
 
 function cmsCreateProofingTransform(hInput, inputFormat, hOutput, outputFormat, proofing, intent, proofingIntent, flags) {
     console.log(intent);
-    return ccall("cmsCreateProofingTransform", "number", ["number", "number", "number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, proofing, intent, proofingIntent, flags]);
+    return Module.ccall("cmsCreateProofingTransform", "number", ["number", "number", "number", "number", "number", "number", "number", "number"], [hInput, inputFormat, hOutput, outputFormat, proofing, intent, proofingIntent, flags]);
 }
 
 function  cmsDeleteTransform(transform){
@@ -330,14 +334,14 @@ function  cmsDeleteTransform(transform){
 	console.warn("cmsDeleteTransform: ! transform");
 	return ;
     }
-    ccall("cmsDeleteTransform", undefined, ["number"], [transform]);
+    Module.ccall("cmsDeleteTransform", undefined, ["number"], [transform]);
 }
 
 function cmsGetTransformInputFormat(transform) {
-    return ccall("cmsGetTransformInputFormat", "number", ["number"], [transform]);
+    return Module.ccall("cmsGetTransformInputFormat", "number", ["number"], [transform]);
 }
 function cmsGetTransformOutputFormat(transform) {
-    return ccall("cmsGetTransformOutputFormat", "number", ["number"], [transform]);
+    return Module.ccall("cmsGetTransformOutputFormat", "number", ["number"], [transform]);
 }
 
 // HEAP view for the sample type. Look it up on every use,
@@ -345,13 +349,13 @@ function cmsGetTransformOutputFormat(transform) {
 function heapByBytes(bytes, isFloat) {
     if (isFloat) {
 	switch(bytes) {
-	case 4: return HEAPF32;
-	case 8: return HEAPF64;
+	case 4: return Module.HEAPF32;
+	case 8: return Module.HEAPF64;
 	}
     } else {
 	switch(bytes) {
-	case 1: return HEAPU8;
-	case 2: return HEAPU16;
+	case 1: return Module.HEAPU8;
+	case 2: return Module.HEAPU16;
 	}
     }
     console.error("heapByBytes(bytes:"+bytes+", isFloat:"+isFloat+")");
@@ -378,8 +382,8 @@ function cmsDoTransform(transform, inputArr, size) {
     var inputLen  = inputChannels * size;
     var outputLen = outputChannels * size;
     //
-    var inputBuffer = _malloc(inputBytes * inputLen);
-    var outputBuffer = _malloc(outputBytes * outputLen);
+    var inputBuffer = Module._malloc(inputBytes * inputLen);
+    var outputBuffer = Module._malloc(outputBytes * outputLen);
     // _malloc returns an 8 bytes aligned pointer.
     var inputOffset = inputBuffer / inputBytes;
     var inputHeap = heapByBytes(inputBytes, inputIsFloat).subarray(inputOffset, inputOffset + inputLen);
@@ -389,7 +393,7 @@ function cmsDoTransform(transform, inputArr, size) {
 	inputArr = Array.prototype.slice.call(inputArr, 0, inputLen);
     }
     inputHeap.set(inputArr);
-    ccall("cmsDoTransform", undefined, ["number", "number", "number", "number"], [transform, inputBuffer, outputBuffer, size]);
+    Module.ccall("cmsDoTransform", undefined, ["number", "number", "number", "number"], [transform, inputBuffer, outputBuffer, size]);
 
     if (outputIsFloat) {
 	var outputArr = new Float64Array(outputLen);
@@ -398,14 +402,14 @@ function cmsDoTransform(transform, inputArr, size) {
     }
     var outputOffset = outputBuffer / outputBytes;
     outputArr.set(heapByBytes(outputBytes, outputIsFloat).subarray(outputOffset, outputOffset + outputLen));
-    _free(inputBuffer);
-    _free(outputBuffer);
+    Module._free(inputBuffer);
+    Module._free(outputBuffer);
     // console.debug("outputArr", outputArr);
     return outputArr;
 }
 
 function cmsReadTag(hProfile, sig) {
-    var ptr = ccall("cmsReadTag", undefined, ["number", "number"], [hProfile, sig]);
+    var ptr = Module.ccall("cmsReadTag", undefined, ["number", "number"], [hProfile, sig]);
     return ptr;
 }
 
@@ -416,24 +420,24 @@ function cmsReadTag_XYZ(hProfile, sig) {
 	return null;
     }
     var xyz = new Float64Array(3);
-    xyz[0]  = getValue(ptr     , "double");
-    xyz[1]  = getValue(ptr + 8 , "double");
-    xyz[2]  = getValue(ptr + 16, "double");
+    xyz[0]  = Module.getValue(ptr     , "double");
+    xyz[1]  = Module.getValue(ptr + 8 , "double");
+    xyz[2]  = Module.getValue(ptr + 16, "double");
     return xyz;
 }
 
 function cmsXYZ2xyY(xyz) {
-    var srcPtr = _malloc(8 * 3);
-    var dstPtr = _malloc(8 * 3);
-    setValue(srcPtr     , xyz[0], "double");
-    setValue(srcPtr + 8 , xyz[1], "double");
-    setValue(srcPtr + 16, xyz[2], "double");
-    ccall("cmsXYZ2xyY", undefined, ["number", "number"], [dstPtr, srcPtr]);
+    var srcPtr = Module._malloc(8 * 3);
+    var dstPtr = Module._malloc(8 * 3);
+    Module.setValue(srcPtr     , xyz[0], "double");
+    Module.setValue(srcPtr + 8 , xyz[1], "double");
+    Module.setValue(srcPtr + 16, xyz[2], "double");
+    Module.ccall("cmsXYZ2xyY", undefined, ["number", "number"], [dstPtr, srcPtr]);
     var xyY = new Float64Array(3);
-    xyY[0] = getValue(dstPtr     , "double");
-    xyY[1] = getValue(dstPtr + 8 , "double");
-    xyY[2] = getValue(dstPtr + 16, "double");
-    _free(srcPtr);
-    _free(dstPtr);
+    xyY[0] = Module.getValue(dstPtr     , "double");
+    xyY[1] = Module.getValue(dstPtr + 8 , "double");
+    xyY[2] = Module.getValue(dstPtr + 16, "double");
+    Module._free(srcPtr);
+    Module._free(dstPtr);
     return xyY;
 }
