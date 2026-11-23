@@ -352,8 +352,9 @@ function cmsDoTransform(transform, inputArr, size) {
     // console.debug("transform:"+transform);
     var inputIsFloat  = T_FLOAT(inputFormat); // Float64 or Uint16
     var outputIsFloat = T_FLOAT(outputFormat);
-    var inputChannels  = T_CHANNELS(inputFormat); // 3(RGB) or 4(CMYK)
-    var outputChannels = T_CHANNELS(outputFormat);
+    // color channels (3:RGB, 4:CMYK) + extra channels (alpha etc.)
+    var inputChannels  = T_CHANNELS(inputFormat) + T_EXTRA(inputFormat);
+    var outputChannels = T_CHANNELS(outputFormat) + T_EXTRA(outputFormat);
     var inputBytes  = T_BYTES(inputFormat); // Bytews per sample
     var outputBytes = T_BYTES(outputFormat);
     inputBytes  = (inputBytes < 1)? 8: inputBytes;
